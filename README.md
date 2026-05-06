@@ -65,4 +65,5 @@ src/
 docs/
   product.md    Product overview and MVP scope
   launch.md     Launch checklist and pricing direction
+  competitive-research.md  Competitor scan and positioning gap
 ```

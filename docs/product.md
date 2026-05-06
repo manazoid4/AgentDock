@@ -2,7 +2,7 @@
 
 ## Position
 
-AgentDock is a plug-and-play agent operations platform for businesses that run workflows through ServiceNow, Zendesk, Jira, email, or custom ticketing systems.
+AgentDock is a plug-and-play agent operations platform for service managers running messy cross-department workflows through ServiceNow, Zendesk, Jira, email, finance systems, and field operations tools.
 
 It does not replace those systems. It makes agents visible, reviewable, and auditable inside them.
 
@@ -24,7 +24,7 @@ Trigger -> Triage -> Draft -> Review -> Send -> Log
 
 - Operations Dock dashboard
 - Agent Board
-- Complaint management pipeline
+- Complaint management pipeline for telecom/service teams
 - Manual workflow trigger and assignment
 - Review Gate before risky actions
 - Handoff Log with audit trail
@@ -79,6 +79,34 @@ Connector responsibilities:
 - Update records after approval.
 - Receive webhooks for real-time workflow triggers.
 - Write audit references back to the source record where appropriate.
+
+## Service Manager Buyer Story
+
+The first buyer is a service manager inside a telecom, broadband, managed Wi-Fi, or network services company.
+
+They own the ugly middle:
+
+- Customers shouting about downtime.
+- Billing disputes after package changes or failed provisioning.
+- SLA timers running while teams argue ownership.
+- Field engineers missing notes, parts, access, or handover detail.
+- Account managers warning that a customer is about to leave.
+- Finance asking whether a credit is valid.
+
+AgentDock should give them the cases that need action today, not another queue to babysit.
+
+## Service Risk Signals
+
+AgentDock prioritises:
+
+- SLA risk
+- Complaint risk
+- Churn risk
+- Billing dispute risk
+- Repeat ticket volume
+- Credit leakage
+- Avoidable engineer rework
+- Stuck handoffs between support, finance, field ops, and account management
 
 ## Technical Direction
 

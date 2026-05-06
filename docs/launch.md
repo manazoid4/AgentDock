@@ -27,6 +27,38 @@
 - Audit export ready
 - Privacy, terms, and DPA pages ready
 
+## Trust Language
+
+Use conservative trust language. Do not imply certifications before they exist.
+
+Hero badges:
+
+- Read-only demo available
+- Human approval before action
+- Audit logs from day one
+- GDPR-ready operating model
+- SOC 2 controls roadmap
+
+Safe wording:
+
+```text
+GDPR-ready, not GDPR-certified.
+We are building around data minimisation, clear processing purposes, processor contracts, retention controls, and documented subprocessors.
+```
+
+```text
+SOC 2 is on the roadmap. We are currently mapping internal controls to security, availability, confidentiality, and privacy criteria.
+```
+
+Avoid:
+
+- SOC 2 compliant
+- GDPR compliant
+- Fully secure
+- Bank-level encryption
+- Zero-risk automation
+- Works with every system
+
 ## First Demo Narrative
 
 Lead with complaint management:
@@ -46,6 +78,23 @@ Then show expansion:
 - HR Agent for policy and onboarding queries.
 - IT Support Agent for service desk triage.
 - Report Agent for scheduled management packs.
+
+## Telecom Service Manager Narrative
+
+Lead with this story:
+
+```text
+Your customers do not care which system failed.
+They care that the broadband is down, the bill looks wrong, the engineer missed the job, the ticket went nowhere, or the SLA was breached.
+By the time it reaches the service manager, trust is already damaged.
+```
+
+AgentDock watches the operational signals across tickets, handoffs, billing queries, SLA timers, and customer history.
+
+It shows what needs action now.
+
+Not every ticket.
+The expensive ones.
 
 ## Copy Rules
 
