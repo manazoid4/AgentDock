@@ -108,6 +108,19 @@ AgentDock prioritises:
 - Avoidable engineer rework
 - Stuck handoffs between support, finance, field ops, and account management
 
+## Complaint Clock Tracking
+
+AgentDock should track complaint age and deadline risk by configured rule set:
+
+- FCA-regulated complaint route
+- Payment services / e-money complaint route
+- UK telecom ADR route
+- Irish telecom complaint route
+- Internal SLA route
+- Contract-specific customer SLA route
+
+Sensitive actions such as final responses, credits, deadlock letters, and customer-facing complaint updates must pass through Review Gate.
+
 ## Technical Direction
 
 - Frontend: React, TypeScript, Vite

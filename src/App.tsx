@@ -79,6 +79,33 @@ const trustTokens = [
   'Clear Founding 10 terms',
 ]
 
+const complianceTimers = [
+  {
+    label: 'FCA quick resolution',
+    clock: 'Close of 3 business days',
+    detail:
+      'Resolved financial-service complaints need a summary resolution communication, not a buried note.',
+  },
+  {
+    label: 'FCA final response',
+    clock: '8 weeks',
+    detail:
+      'Standard regulated complaints need a final response or clear escalation route to the Ombudsman.',
+  },
+  {
+    label: 'Payments / e-money',
+    clock: '15 business days',
+    detail:
+      'Payment-service complaints normally need a final response faster, with an outer 35-business-day limit where delays are explained.',
+  },
+  {
+    label: 'Telecom ADR risk',
+    clock: '8 weeks or deadlock',
+    detail:
+      'UK telecom complaints can move toward ADR when unresolved or deadlocked. The manager needs warning before that point.',
+  },
+]
+
 const competitors = [
   'ServiceNow',
   'Zendesk',
@@ -156,12 +183,13 @@ function App() {
       <section className="section manager" id="manager">
         <div className="manager-copy">
           <p className="eyebrow">Example buyer</p>
-          <h2>Picture a Dublin telecom service manager on a rough Tuesday.</h2>
+          <h2>Picture a Glide-style connectivity operator on a rough Tuesday.</h2>
           <p>
-            Broadband complaints are climbing. Finance is asking why credits
-            are being offered. Field ops says the notes are missing. The
-            customer team wants a first response now. The manager does not want
-            another dashboard. They want control.
+            Managed Wi-Fi complaints are climbing across student accommodation,
+            business sites, and build-to-rent buildings. Finance is asking why
+            credits are being offered. Field ops says the notes are missing.
+            The customer team wants a first response now. The manager does not
+            want another dashboard. They want control.
           </p>
         </div>
         <div className="scenario-stack">
@@ -169,6 +197,27 @@ function App() {
             <article className="scenario-card" key={scenario.title}>
               <h3>{scenario.title}</h3>
               <p>{scenario.detail}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="section compliance">
+        <div className="section-heading">
+          <p className="eyebrow">Complaint clocks</p>
+          <h2>Some complaints are not just annoying. They have timers.</h2>
+          <p>
+            AgentDock should track complaint age, regulator-relevant deadlines,
+            deadlock risk, and missing evidence before the service manager is
+            forced into a rushed final response.
+          </p>
+        </div>
+        <div className="timer-grid">
+          {complianceTimers.map((timer) => (
+            <article className="timer-card" key={timer.label}>
+              <span>{timer.label}</span>
+              <strong>{timer.clock}</strong>
+              <p>{timer.detail}</p>
             </article>
           ))}
         </div>
@@ -311,7 +360,7 @@ function OfficeMap() {
     <div className="office-shell" aria-label="AgentDock virtual office preview">
       <div className="office-titlebar">
         <span>Live service floor</span>
-        <strong>Dublin telecom demo</strong>
+        <strong>Managed connectivity demo</strong>
       </div>
       <div className="office-map">
         {departments.map((department) => (

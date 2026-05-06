@@ -398,6 +398,7 @@ p {
 }
 
 .flow,
+.compliance,
 .trust {
   background: #f3f9ff;
 }
@@ -431,6 +432,39 @@ p {
 
 .workflow-step strong {
   color: #08111f;
+}
+
+.timer-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.timer-card {
+  min-height: 250px;
+  border: 1px solid #cfe5fb;
+  border-radius: 24px;
+  padding: 24px;
+  background: #ffffff;
+  box-shadow: 0 22px 70px rgba(35, 75, 118, 0.08);
+}
+
+.timer-card span {
+  display: block;
+  margin-bottom: 26px;
+  color: #126fc2;
+  font-size: 12px;
+  font-weight: 850;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.timer-card strong {
+  display: block;
+  margin-bottom: 18px;
+  color: #08111f;
+  font-size: clamp(28px, 3vw, 40px);
+  line-height: 1;
 }
 
 .agents {
@@ -592,6 +626,7 @@ p {
 
   .agent-run-grid,
   .workflow-strip,
+  .timer-grid,
   .proof-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -611,6 +646,7 @@ p {
   .office-map,
   .agent-run-grid,
   .workflow-strip,
+  .timer-grid,
   .token-grid,
   .proof-grid {
     grid-template-columns: 1fr;

@@ -66,4 +66,5 @@ docs/
   product.md    Product overview and MVP scope
   launch.md     Launch checklist and pricing direction
   competitive-research.md  Competitor scan and positioning gap
+  complaints-compliance.md  FCA/telecom complaint timer notes
 ```

@@ -96,6 +96,28 @@ It shows what needs action now.
 Not every ticket.
 The expensive ones.
 
+## Compliance Copy For Site
+
+Use:
+
+```text
+Some complaints are not just annoying. They have timers.
+```
+
+Supporting copy:
+
+```text
+AgentDock tracks complaint age, regulator-relevant deadlines, deadlock risk, missing evidence, and approval status before a service manager is forced into a rushed final response.
+```
+
+Do not say:
+
+- FCA compliant
+- Ofcom compliant
+- ComReg compliant
+- Automates complaint compliance
+- Sends final responses automatically
+
 ## Copy Rules
 
 Say:
