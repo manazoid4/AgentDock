@@ -26,6 +26,7 @@
 - Handoff Log recording every action
 - Audit export ready
 - Privacy, terms, and DPA pages ready
+- Scenario report reviewed against `docs/launch-scenarios.md`
 
 ## Trust Language
 

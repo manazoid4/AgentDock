@@ -67,4 +67,6 @@ docs/
   launch.md     Launch checklist and pricing direction
   competitive-research.md  Competitor scan and positioning gap
   complaints-compliance.md  FCA/telecom complaint timer notes
+  launch-scenarios.md  AgentDock-specific launch simulations
+  target-audience.md  Buyer profile and warm visual direction
 ```

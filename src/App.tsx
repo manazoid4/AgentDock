@@ -31,6 +31,25 @@ const departments = [
   },
 ]
 
+const targetAudiences = [
+  {
+    title: 'Head of Customer Service',
+    pain: 'Needs complaint risk, repeat contact, and first-response quality visible before the weekly numbers look ugly.',
+  },
+  {
+    title: 'Service Manager',
+    pain: 'Owns SLA clocks, field handoffs, billing noise, and the customer who keeps coming back angry.',
+  },
+  {
+    title: 'Operations Lead',
+    pain: 'Wants fewer “who owns this?” moments across ServiceNow, Zendesk, Jira, finance, and field teams.',
+  },
+  {
+    title: 'Compliance / QA Manager',
+    pain: 'Needs evidence, approvals, complaint clocks, and clean audit logs without reading five systems.',
+  },
+]
+
 const agentRuns = [
   {
     agent: 'Complaint First Response',
@@ -79,6 +98,15 @@ const trustTokens = [
   'Clear Founding 10 terms',
 ]
 
+const scenarioTests = [
+  'P1 complaint from a high-value account is misclassified as normal.',
+  'Same customer complains by email and ticket within 10 minutes.',
+  'Finance credit request exceeds policy without manager approval.',
+  'Engineer arrives without access notes and the visit fails.',
+  'ServiceNow API is down while approvals are waiting.',
+  'Complaint reaches day 50 with no final-response owner.',
+]
+
 const complianceTimers = [
   {
     label: 'FCA quick resolution',
@@ -115,6 +143,10 @@ const competitors = [
   'Intercom',
   'Ada',
   'UiPath',
+  'Bright Pattern',
+  'Genesys',
+  'NICE',
+  'Five9',
   'Dify',
   'LangGraph',
 ]
@@ -155,12 +187,12 @@ function App() {
 
       <section className="hero section" id="top">
         <div className="hero-copy">
-          <p className="eyebrow">Built for service managers</p>
-          <h1>Your agents should not be hiding in chat windows.</h1>
+          <p className="eyebrow">Warm control for messy service work</p>
+          <h1>The calm office for complaint chaos.</h1>
           <p className="hero-sub">
-            AgentDock is a control room for service operations. Complaints,
-            finance queries, field handoffs, and SLA risk move through one
-            visible office before anything critical reaches the customer.
+            AgentDock gives every service agent a desk, a route, and a human
+            checkpoint. Complaints, finance queries, field handoffs, and SLA
+            risk stop drifting through chat windows and start moving like work.
           </p>
           <div className="hero-actions">
             <a className="primary-button" href="#office">
@@ -202,6 +234,27 @@ function App() {
         </div>
       </section>
 
+      <section className="section audience">
+        <div className="section-heading">
+          <p className="eyebrow">Target audience</p>
+          <h2>Built for department managers who get blamed when handoffs fail.</h2>
+          <p>
+            These buyers do not need a mascot or another automation canvas. They
+            need the expensive exceptions surfaced early, explained clearly, and
+            routed to the right person.
+          </p>
+        </div>
+        <div className="audience-grid">
+          {targetAudiences.map((audience) => (
+            <article className="audience-card" key={audience.title}>
+              <span>For</span>
+              <h3>{audience.title}</h3>
+              <p>{audience.pain}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
       <section className="section compliance">
         <div className="section-heading">
           <p className="eyebrow">Complaint clocks</p>
@@ -238,6 +291,25 @@ function App() {
             <div className="workflow-step" key={step}>
               <span>{String(index + 1).padStart(2, '0')}</span>
               <strong>{step}</strong>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="section scenarios">
+        <div className="scenario-copy">
+          <p className="eyebrow">Scenario tested</p>
+          <h2>Designed against real failure modes, not demo theatre.</h2>
+          <p>
+            The launch scenarios are adapted from the JobFilter discipline:
+            find the breakpoints, then build the product proof around them.
+          </p>
+        </div>
+        <div className="test-list">
+          {scenarioTests.map((test) => (
+            <div className="test-item" key={test}>
+              <span />
+              <p>{test}</p>
             </div>
           ))}
         </div>
@@ -289,12 +361,12 @@ function App() {
       <section className="section research" id="research">
         <div>
           <p className="eyebrow">Competitive angle</p>
-          <h2>The big platforms automate. AgentDock makes the work inspectable.</h2>
+          <h2>30+ competitors reviewed. The gap is still control.</h2>
           <p>
-            ServiceNow, Zendesk, Salesforce, Atlassian, and UiPath already prove
-            the demand. The wedge is not replacing them. The wedge is giving a
-            service manager a cross-department control room for agents working
-            inside them.
+            ServiceNow, Zendesk, Bright Pattern, Genesys, NICE, Salesforce,
+            UiPath, Dify, LangGraph, and the rest prove demand. Most build,
+            automate, or deflect. AgentDock gives a department manager a warm,
+            inspectable control room for the risky work between systems.
           </p>
         </div>
         <div className="competitor-cloud" aria-label="Competitors researched">
