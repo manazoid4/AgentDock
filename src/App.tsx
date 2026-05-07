@@ -1,4 +1,12 @@
 import './App.css'
+import { BrowserRouter, Routes, Route, Link } from 'react-router-dom'
+import DashboardLayout from './pages/DashboardLayout'
+import OperationsDock from './pages/OperationsDock'
+import AgentBoardPage from './pages/AgentBoardPage'
+import PipelineViewPage from './pages/PipelineViewPage'
+import HandoffLogPage from './pages/HandoffLogPage'
+import ReviewGatePage from './pages/ReviewGatePage'
+import ConnectorsPage from './pages/ConnectorsPage'
 
 const departments = [
   {
@@ -42,7 +50,7 @@ const targetAudiences = [
   },
   {
     title: 'Operations Lead',
-    pain: 'Wants fewer “who owns this?” moments across ServiceNow, Zendesk, Jira, finance, and field teams.',
+    pain: 'Wants fewer "who owns this?" moments across ServiceNow, Zendesk, Jira, finance, and field teams.',
   },
   {
     title: 'Compliance / QA Manager',
@@ -169,7 +177,7 @@ const scenarios = [
   },
 ]
 
-function App() {
+function LandingPage() {
   return (
     <main>
       <nav className="topbar" aria-label="Main navigation">
@@ -182,6 +190,22 @@ function App() {
           <a href="#manager">Manager</a>
           <a href="#trust">Trust</a>
           <a href="#research">Research</a>
+          <Link
+            to="/dashboard"
+            className="block-card block-card--blue"
+            style={{
+              color: 'var(--blue)',
+              fontWeight: 700,
+              fontFamily: "'JetBrains Mono', monospace",
+              padding: '5px 14px',
+              textDecoration: 'none',
+              fontSize: 12,
+              letterSpacing: '0.06em',
+              display: 'inline-block',
+            }}
+          >
+            ENTER DASHBOARD →
+          </Link>
         </div>
       </nav>
 
@@ -198,9 +222,22 @@ function App() {
             <a className="primary-button" href="#office">
               Open the office
             </a>
-            <a className="secondary-button" href="#manager">
-              See the service story
-            </a>
+            <Link
+              to="/dashboard"
+              className="block-card block-card--blue"
+              style={{
+                color: 'var(--blue)',
+                fontWeight: 700,
+                fontFamily: "'JetBrains Mono', monospace",
+                padding: '10px 22px',
+                textDecoration: 'none',
+                fontSize: 13,
+                letterSpacing: '0.07em',
+                display: 'inline-block',
+              }}
+            >
+              ENTER DASHBOARD →
+            </Link>
           </div>
           <div className="signal-row" aria-label="Trust signals">
             <span>Read-only demo available</span>
@@ -475,6 +512,24 @@ function OfficeMap() {
         </div>
       </div>
     </div>
+  )
+}
+
+function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/dashboard" element={<DashboardLayout />}>
+          <Route index element={<OperationsDock />} />
+          <Route path="agents" element={<AgentBoardPage />} />
+          <Route path="pipeline" element={<PipelineViewPage />} />
+          <Route path="logs" element={<HandoffLogPage />} />
+          <Route path="review" element={<ReviewGatePage />} />
+          <Route path="connectors" element={<ConnectorsPage />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   )
 }
 

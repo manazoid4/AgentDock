@@ -1,31 +1,100 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
 :root {
-  color: #07111f;
-  background: #ffffff;
-  font-family:
-    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-    sans-serif;
+  /* Base */
+  --bg:        #0D1117;
+  --bg-2:      #161B22;
+  --bg-3:      #21262D;
+  --border:    #30363D;
+  --border-2:  #484F58;
+
+  /* Accent */
+  --blue:      #58A6FF;
+  --blue-dark: #1F6FEB;
+  --green:     #3FB950;
+  --green-dark:#238636;
+  --yellow:    #D29922;
+  --yellow-dark:#BB8009;
+  --red:       #F85149;
+  --red-dark:  #DA3633;
+  --purple:    #BC8CFF;
+
+  /* Text */
+  --text:      #E6EDF3;
+  --text-2:    #8B949E;
+  --text-3:    #484F58;
+
+  /* Block system */
+  --block-side-dark: #010409;
+
+  font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-* {
-  box-sizing: border-box;
-}
+*, *::before, *::after { box-sizing: border-box; }
 
-html {
-  scroll-behavior: smooth;
-}
+html { scroll-behavior: smooth; }
 
 body {
-  min-width: 320px;
   margin: 0;
+  min-width: 320px;
+  background-color: var(--bg);
+  color: var(--text);
+  background-image:
+    linear-gradient(rgba(48, 54, 61, 0.15) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(48, 54, 61, 0.15) 1px, transparent 1px);
+  background-size: 32px 32px;
 }
 
-button,
-input,
-textarea,
-select {
-  font: inherit;
+button, input, textarea, select { font: inherit; }
+
+/* ── Block card primitive ── */
+.block-card {
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  box-shadow: 4px 4px 0 0 var(--block-side-dark);
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
 }
+.block-card:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 5px 5px 0 0 var(--block-side-dark);
+  border-color: var(--border-2);
+}
+.block-card--blue  { border-color: var(--blue-dark);   box-shadow: 4px 4px 0 0 var(--blue-dark); }
+.block-card--green { border-color: var(--green-dark);  box-shadow: 4px 4px 0 0 var(--green-dark); }
+.block-card--yellow{ border-color: var(--yellow-dark); box-shadow: 4px 4px 0 0 var(--yellow-dark); }
+.block-card--red   { border-color: var(--red-dark);    box-shadow: 4px 4px 0 0 var(--red-dark); }
+
+.block-card--blue:hover  { box-shadow: 5px 5px 0 0 var(--blue-dark); }
+.block-card--green:hover { box-shadow: 5px 5px 0 0 var(--green-dark); }
+.block-card--yellow:hover{ box-shadow: 5px 5px 0 0 var(--yellow-dark); }
+.block-card--red:hover   { box-shadow: 5px 5px 0 0 var(--red-dark); }
+
+/* ── Status LEDs ── */
+.status-led {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+.led-green  { background: var(--green);  box-shadow: 0 0 6px var(--green); }
+.led-yellow { background: var(--yellow); box-shadow: 0 0 6px var(--yellow); }
+.led-red    { background: var(--red);    box-shadow: 0 0 6px var(--red); }
+.led-blue   { background: var(--blue);   box-shadow: 0 0 6px var(--blue); }
+.led-grey   { background: var(--text-3); }
+.led-pulse  { animation: pulse-glow 1.5s ease-in-out infinite; }
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.4; }
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border-2); border-radius: 3px; }
