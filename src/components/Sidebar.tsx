@@ -7,6 +7,8 @@ const navItems = [
   { icon: '⟶', label: 'Pipeline', path: '/dashboard/pipeline' },
   { icon: '≡', label: 'Audit Log', path: '/dashboard/logs' },
   { icon: '⚑', label: 'Review Gate', path: '/dashboard/review' },
+  { icon: '✓', label: 'Compliance', path: '/dashboard/compliance' },
+  { icon: '◆', label: 'Reports', path: '/dashboard/reports' },
   { icon: '⬡', label: 'Connectors', path: '/dashboard/connectors' },
 ]
 

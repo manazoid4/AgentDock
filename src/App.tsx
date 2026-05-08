@@ -8,6 +8,8 @@ import PipelineViewPage from './pages/PipelineViewPage'
 import HandoffLogPage from './pages/HandoffLogPage'
 import ReviewGatePage from './pages/ReviewGatePage'
 import ConnectorsPage from './pages/ConnectorsPage'
+import ComplianceDashboardPage from './pages/ComplianceDashboardPage'
+import ReportGeneratorPage from './pages/ReportGeneratorPage'
 
 const pipelineStages = [
   { num: '01', label: 'TRIGGER', desc: 'Ticket lands in ServiceNow' },
@@ -435,6 +437,8 @@ function App() {
           <Route path="pipeline" element={<PipelineViewPage />} />
           <Route path="logs" element={<HandoffLogPage />} />
           <Route path="review" element={<ReviewGatePage />} />
+          <Route path="compliance" element={<ComplianceDashboardPage />} />
+          <Route path="reports" element={<ReportGeneratorPage />} />
           <Route path="connectors" element={<ConnectorsPage />} />
         </Route>
       </Routes>

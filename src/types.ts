@@ -110,3 +110,52 @@ export interface DemoApproval {
   agentName: string
   timestamp: string
 }
+
+export interface ApprovalRecord {
+  id: string
+  taskId: string
+  taskRef: string
+  approverId: string
+  approverName: string
+  decision: 'approved' | 'rejected'
+  reason: string
+  timestamp: string
+  role: string
+}
+
+export interface EscalationRule {
+  id: string
+  name: string
+  thresholdHours: number
+  escalateTo: string
+  active: boolean
+}
+
+export interface ComplianceMetric {
+  id: string
+  name: string
+  framework: 'FCA' | 'Ofcom' | 'GDPR' | 'DataResidency' | 'Internal'
+  status: 'compliant' | 'at-risk' | 'breached' | 'unknown'
+  value: string
+  detail: string
+  lastChecked: string
+  trend: 'up' | 'down' | 'stable'
+}
+
+export interface ComplianceReport {
+  id: string
+  type: 'monthly' | 'incident' | 'agent-performance' | 'custom'
+  title: string
+  generatedAt: string
+  generatedBy: string
+  periodStart: string
+  periodEnd: string
+  status: 'draft' | 'final'
+  sections: ReportSection[]
+}
+
+export interface ReportSection {
+  title: string
+  data: Record<string, unknown>[]
+  summary: string
+}

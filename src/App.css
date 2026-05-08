@@ -952,3 +952,30 @@ main.lp {
     align-items: flex-start;
   }
 }
+
+/* ── Audit Log Responsive ── */
+@media (max-width: 1080px) {
+  .audit-log-grid {
+    grid-template-columns: 80px 120px 80px 70px 1fr 90px 30px !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .audit-log-grid {
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+  }
+  .audit-log-grid > div {
+    grid-template-columns: 1fr 1fr !important;
+  }
+  .compliance-metrics-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .report-templates-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .review-gate-card {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+  }
+}
