@@ -1,4 +1,4 @@
-import type { Task, Agent, TaskStatus } from '../types'
+import type { Task, Agent } from '../types'
 import TaskCard from './TaskCard'
 
 interface Props {
@@ -83,12 +83,3 @@ export default function PipelineStage({ label, tasks, agents }: Props) {
     </div>
   )
 }
-
-export const PIPELINE_STAGES: { label: string; status: TaskStatus }[] = [
-  { label: 'TRIGGER',  status: 'triggered' },
-  { label: 'TRIAGE',   status: 'triaged' },
-  { label: 'DRAFT',    status: 'in-progress' },
-  { label: 'REVIEW',   status: 'awaiting-approval' },
-  { label: 'RESOLVED', status: 'resolved' },
-  { label: 'LOG',      status: 'logged' },
-]

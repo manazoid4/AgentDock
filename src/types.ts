@@ -48,4 +48,65 @@ export interface Connector {
   name: string
   status: 'connected' | 'disconnected' | 'error'
   lastSync?: string
+  health?: ConnectorHealth
+}
+
+export interface ConnectorHealth {
+  latencyMs: number
+  errorCount: number
+  rateLimitRemaining: number
+  uptimePercent: number
+  lastError?: string
+  messagesProcessed: number
+}
+
+export interface AuditLogEntry {
+  id: string
+  timestamp: string
+  agentId: string
+  agentName: string
+  taskId?: string
+  taskRef?: string
+  action: string
+  detail: string
+  approvalRequired: boolean
+  approvedBy?: string
+  severity: 'info' | 'warning' | 'critical'
+}
+
+export interface DemoState {
+  active: boolean
+  phase: number
+  p1Ticket: P1Ticket | null
+  auditLog: AuditLogEntry[]
+  metrics: DemoMetrics
+  pendingApproval: DemoApproval | null
+}
+
+export interface P1Ticket {
+  id: string
+  ref: string
+  title: string
+  stage: string
+  stageIndex: number
+  createdAt: string
+  updatedAt: string
+}
+
+export interface DemoMetrics {
+  ticketsProcessed: number
+  avgResolutionMinutes: number
+  approvalRate: number
+  complianceScore: number
+  activeAgents: number
+}
+
+export interface DemoApproval {
+  taskId: string
+  taskRef: string
+  title: string
+  action: string
+  detail: string
+  agentName: string
+  timestamp: string
 }

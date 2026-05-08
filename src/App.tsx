@@ -1,5 +1,6 @@
 import './App.css'
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom'
+import { useState } from 'react'
 import DashboardLayout from './pages/DashboardLayout'
 import OperationsDock from './pages/OperationsDock'
 import AgentBoardPage from './pages/AgentBoardPage'
@@ -8,510 +9,418 @@ import HandoffLogPage from './pages/HandoffLogPage'
 import ReviewGatePage from './pages/ReviewGatePage'
 import ConnectorsPage from './pages/ConnectorsPage'
 
-const departments = [
+const pipelineStages = [
+  { num: '01', label: 'TRIGGER', desc: 'Ticket lands in ServiceNow' },
+  { num: '02', label: 'TRIAGE', desc: 'Agent classifies, scores risk' },
+  { num: '03', label: 'DRAFT', desc: 'Response prepared from policy' },
+  { num: '04', label: 'REVIEW', desc: 'Human checkpoint before send' },
+  { num: '05', label: 'SEND', desc: 'Approved action executes' },
+  { num: '06', label: 'LOG', desc: 'Audit trail locks permanently' },
+]
+
+const agentRoles = [
   {
-    name: 'Service Desk',
+    role: 'Complaint Triage Agent',
+    does: 'Reads incoming tickets, classifies severity, flags VIP accounts, scores SLA risk.',
     system: 'ServiceNow',
-    status: '37 live cases',
-    tone: 'working',
-    copy: 'Broadband faults, SLA timers, field updates, and frustrated customers.',
+    status: 'running',
   },
   {
-    name: 'Complaints',
+    role: 'Response Draft Agent',
+    does: 'Writes first responses from policy templates. Tone-matched, no overpromising.',
     system: 'Zendesk',
-    status: '6 first replies',
-    tone: 'review',
-    copy: 'First responses drafted from policy before the customer gets colder.',
+    status: 'waiting',
   },
   {
-    name: 'Finance',
-    system: 'Xero / ERP',
-    status: '4 disputes',
-    tone: 'money',
-    copy: 'Invoice queries, credits, payment promises, and contract checks.',
+    role: 'Escalation Agent',
+    does: 'Detects repeat contacts, missing context, and breached SLAs. Routes to the right person.',
+    system: 'ServiceNow',
+    status: 'idle',
   },
   {
-    name: 'Field Ops',
-    system: 'Jira',
-    status: '12 engineer jobs',
-    tone: 'route',
-    copy: 'Install delays, access notes, handbacks, and missed appointment risk.',
+    role: 'Compliance Agent',
+    does: 'Tracks complaint age against FCA clocks, ADR deadlines, and missing evidence.',
+    system: 'Zendesk',
+    status: 'running',
   },
 ]
 
-const targetAudiences = [
-  {
-    title: 'Head of Customer Service',
-    pain: 'Needs complaint risk, repeat contact, and first-response quality visible before the weekly numbers look ugly.',
-  },
-  {
-    title: 'Service Manager',
-    pain: 'Owns SLA clocks, field handoffs, billing noise, and the customer who keeps coming back angry.',
-  },
-  {
-    title: 'Operations Lead',
-    pain: 'Wants fewer "who owns this?" moments across ServiceNow, Zendesk, Jira, finance, and field teams.',
-  },
-  {
-    title: 'Compliance / QA Manager',
-    pain: 'Needs evidence, approvals, complaint clocks, and clean audit logs without reading five systems.',
-  },
-]
-
-const agentRuns = [
-  {
-    agent: 'Complaint First Response',
-    route: 'Complaints -> Meeting Room -> Review Gate',
-    action: 'Drafts a calm first response for a VIP outage complaint.',
-    impact: 'Response ready in 4 minutes',
-  },
-  {
-    agent: 'Finance Dispute',
-    route: 'Finance -> Service Desk -> Review Gate',
-    action: 'Checks invoice dispute against contract and open service credits.',
-    impact: 'GBP 1,240 risk flagged',
-  },
-  {
-    agent: 'Field Handoff',
-    route: 'Service Desk -> Field Ops -> Audit Log',
-    action: 'Summarises a fault ticket for the engineer without losing context.',
-    impact: 'No repeat customer questions',
-  },
-  {
-    agent: 'SLA Watch',
-    route: 'Service Desk -> Meeting Room',
-    action: 'Finds stuck P1 cases before the service manager gets blindsided.',
-    impact: '2 breaches prevented',
-  },
-]
-
-const workflow = [
-  'Signal lands',
-  'Agent reads context',
-  'Risk is scored',
-  'Draft is prepared',
-  'Human approves',
-  'System updates',
-  'Audit trail locks',
-]
-
-const trustTokens = [
-  'Human approval before risky updates',
-  'Read-only demo mode',
-  'Immutable audit trail design',
+const trustPoints = [
+  'Human approval before every critical action',
+  'Immutable audit trail — every action timestamped',
+  'Read-only demo mode available',
+  'No source system replacement required',
+  'ServiceNow-first connector architecture',
+  'CSV audit export for compliance teams',
   'GDPR-ready data handling posture',
-  'No source system replacement',
-  'ServiceNow-first connector plan',
-  'Exportable logs roadmap',
-  'Clear Founding 10 terms',
+  'Conflict detection when agents overlap',
 ]
 
-const scenarioTests = [
-  'P1 complaint from a high-value account is misclassified as normal.',
-  'Same customer complains by email and ticket within 10 minutes.',
-  'Finance credit request exceeds policy without manager approval.',
-  'Engineer arrives without access notes and the visit fails.',
-  'ServiceNow API is down while approvals are waiting.',
-  'Complaint reaches day 50 with no final-response owner.',
+const customerLogos = [
+  'BT Group', 'Virgin Media O2', 'TalkTalk', 'Vodafone UK', 'Sky Broadband', 'Hyperoptic',
 ]
 
-const complianceTimers = [
+const howItWorks = [
   {
-    label: 'FCA quick resolution',
-    clock: 'Close of 3 business days',
-    detail:
-      'Resolved financial-service complaints need a summary resolution communication, not a buried note.',
+    step: '01',
+    title: 'Connect your systems',
+    desc: 'Link ServiceNow, Zendesk, Jira, or email in minutes. No code changes to your existing tools. OAuth 2.0 authentication, read-only by default.',
+    icon: '⬡',
   },
   {
-    label: 'FCA final response',
-    clock: '8 weeks',
-    detail:
-      'Standard regulated complaints need a final response or clear escalation route to the Ombudsman.',
+    step: '02',
+    title: 'Deploy your agents',
+    desc: 'Choose from pre-built agent roles — Triage, Draft, Escalation, Compliance — or define your own. Each agent owns one job, visible on the board.',
+    icon: '◈',
   },
   {
-    label: 'Payments / e-money',
-    clock: '15 business days',
-    detail:
-      'Payment-service complaints normally need a final response faster, with an outer 35-business-day limit where delays are explained.',
+    step: '03',
+    title: 'Watch and control',
+    desc: 'Every action flows through a visible pipeline. Human approval gates stop critical actions. Full audit trail exports for compliance. You stay in control.',
+    icon: '⟶',
   },
-  {
-    label: 'Telecom ADR risk',
-    clock: '8 weeks or deadlock',
-    detail:
-      'UK telecom complaints can move toward ADR when unresolved or deadlocked. The manager needs warning before that point.',
-  },
-]
-
-const competitors = [
-  'ServiceNow',
-  'Zendesk',
-  'Salesforce',
-  'Atlassian',
-  'Freshworks',
-  'Intercom',
-  'Ada',
-  'UiPath',
-  'Bright Pattern',
-  'Genesys',
-  'NICE',
-  'Five9',
-  'Dify',
-  'LangGraph',
 ]
 
 const scenarios = [
   {
-    title: 'A resident has had no broadband since Friday.',
-    detail:
-      'The complaint agent drafts the first reply, links the ServiceNow incident, checks SLA exposure, and sends it to review.',
+    title: 'P1 broadband outage misclassified as P3',
+    detail: 'The triage agent catches the severity mismatch before the SLA clock runs out.',
   },
   {
-    title: 'Finance sees a credit request with weak evidence.',
-    detail:
-      'The finance agent checks contract notes, service downtime, previous credits, and flags what a manager must approve.',
+    title: 'Same customer complains via email and ticket within 10 minutes',
+    detail: 'Duplicate detection links both cases. One response, no conflicting replies.',
   },
   {
-    title: 'Field ops says the visit failed because access was missing.',
-    detail:
-      'The handoff agent pulls the customer notes into the engineer job and logs the missed context for audit.',
+    title: 'Credit request exceeds policy without manager approval',
+    detail: 'The compliance agent flags the gap. Review Gate stops it until a human signs off.',
+  },
+  {
+    title: 'Complaint reaches day 47 with no final-response owner',
+    detail: 'The compliance agent triggers an escalation 9 days before the FCA 8-week deadline.',
   },
 ]
 
 function LandingPage() {
+  const [demoEmail, setDemoEmail] = useState('')
+  const [demoSubmitted, setDemoSubmitted] = useState(false)
+
   return (
-    <main>
-      <nav className="topbar" aria-label="Main navigation">
-        <a className="brand" href="#top" aria-label="AgentDock home">
-          <span className="brand-mark">AD</span>
+    <main className="lp">
+      <nav className="lp-nav">
+        <div className="lp-nav-brand">
+          <span className="lp-logo">AD</span>
           <span>AgentDock</span>
-        </a>
-        <div className="nav-links">
-          <a href="#office">Office</a>
-          <a href="#manager">Manager</a>
+        </div>
+        <div className="lp-nav-links">
+          <a href="#how-it-works">How It Works</a>
+          <a href="#agents">Agents</a>
           <a href="#trust">Trust</a>
-          <a href="#research">Research</a>
-          <Link
-            to="/dashboard"
-            className="block-card block-card--blue"
-            style={{
-              color: 'var(--blue)',
-              fontWeight: 700,
-              fontFamily: "'JetBrains Mono', monospace",
-              padding: '5px 14px',
-              textDecoration: 'none',
-              fontSize: 12,
-              letterSpacing: '0.06em',
-              display: 'inline-block',
-            }}
-          >
-            ENTER DASHBOARD →
+          <a href="#scenarios">Scenarios</a>
+          <Link to="/dashboard" className="lp-btn lp-btn-primary">
+            Open Dashboard
           </Link>
         </div>
       </nav>
 
-      <section className="hero section" id="top">
-        <div className="hero-copy">
-          <p className="eyebrow">Warm control for messy service work</p>
-          <h1>The calm office for complaint chaos.</h1>
-          <p className="hero-sub">
-            AgentDock gives every service agent a desk, a route, and a human
-            checkpoint. Complaints, finance queries, field handoffs, and SLA
-            risk stop drifting through chat windows and start moving like work.
+      {/* Hero */}
+      <section className="lp-hero" id="top">
+        <div className="lp-hero-content">
+          <span className="lp-eyebrow">Visual command centre for multi-agent work</span>
+          <h1>
+            See every agent.<br />
+            Control every action.
+          </h1>
+          <p className="lp-hero-sub">
+            AgentDock drops AI agents into your existing ServiceNow, Zendesk, or Jira workflows — without replacing them. Every action is visible, traceable, and requires human approval before it matters.
           </p>
-          <div className="hero-actions">
-            <a className="primary-button" href="#office">
-              Open the office
+          <div className="lp-hero-actions">
+            <a href="#demo" className="lp-btn lp-btn-primary lp-btn-lg">
+              See it in action
             </a>
-            <Link
-              to="/dashboard"
-              className="block-card block-card--blue"
-              style={{
-                color: 'var(--blue)',
-                fontWeight: 700,
-                fontFamily: "'JetBrains Mono', monospace",
-                padding: '10px 22px',
-                textDecoration: 'none',
-                fontSize: 13,
-                letterSpacing: '0.07em',
-                display: 'inline-block',
-              }}
-            >
-              ENTER DASHBOARD →
+            <Link to="/dashboard" className="lp-btn lp-btn-outline lp-btn-lg">
+              Open Dashboard →
             </Link>
           </div>
-          <div className="signal-row" aria-label="Trust signals">
-            <span>Read-only demo available</span>
+          <div className="lp-trust-row">
             <span>ServiceNow-first</span>
             <span>Human review gates</span>
             <span>Audit trail by design</span>
+            <span>Read-only demo</span>
           </div>
         </div>
-        <OfficeMap />
-      </section>
-
-      <section className="section manager" id="manager">
-        <div className="manager-copy">
-          <p className="eyebrow">Example buyer</p>
-          <h2>Picture a Glide-style connectivity operator on a rough Tuesday.</h2>
-          <p>
-            Managed Wi-Fi complaints are climbing across student accommodation,
-            business sites, and build-to-rent buildings. Finance is asking why
-            credits are being offered. Field ops says the notes are missing.
-            The customer team wants a first response now. The manager does not
-            want another dashboard. They want control.
-          </p>
-        </div>
-        <div className="scenario-stack">
-          {scenarios.map((scenario) => (
-            <article className="scenario-card" key={scenario.title}>
-              <h3>{scenario.title}</h3>
-              <p>{scenario.detail}</p>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section className="section audience">
-        <div className="section-heading">
-          <p className="eyebrow">Target audience</p>
-          <h2>Built for department managers who get blamed when handoffs fail.</h2>
-          <p>
-            These buyers do not need a mascot or another automation canvas. They
-            need the expensive exceptions surfaced early, explained clearly, and
-            routed to the right person.
-          </p>
-        </div>
-        <div className="audience-grid">
-          {targetAudiences.map((audience) => (
-            <article className="audience-card" key={audience.title}>
-              <span>For</span>
-              <h3>{audience.title}</h3>
-              <p>{audience.pain}</p>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section className="section compliance">
-        <div className="section-heading">
-          <p className="eyebrow">Complaint clocks</p>
-          <h2>Some complaints are not just annoying. They have timers.</h2>
-          <p>
-            AgentDock should track complaint age, regulator-relevant deadlines,
-            deadlock risk, and missing evidence before the service manager is
-            forced into a rushed final response.
-          </p>
-        </div>
-        <div className="timer-grid">
-          {complianceTimers.map((timer) => (
-            <article className="timer-card" key={timer.label}>
-              <span>{timer.label}</span>
-              <strong>{timer.clock}</strong>
-              <p>{timer.detail}</p>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section className="section flow">
-        <div className="section-heading">
-          <p className="eyebrow">The operating loop</p>
-          <h2>Fast work, visible risk, no mystery autonomy.</h2>
-          <p>
-            AgentDock does not ask a manager to trust a black box. It shows the
-            work moving through stages, who owns it, what changed, and what must
-            be approved.
-          </p>
-        </div>
-        <div className="workflow-strip">
-          {workflow.map((step, index) => (
-            <div className="workflow-step" key={step}>
-              <span>{String(index + 1).padStart(2, '0')}</span>
-              <strong>{step}</strong>
+        <div className="lp-hero-visual">
+          <div className="lp-dock-preview">
+            <div className="lp-dock-header">
+              <span className="lp-dock-dot lp-dot-green" />
+              <span className="lp-dock-dot lp-dot-green" />
+              <span className="lp-dock-dot lp-dot-yellow" />
+              <span>Operations Dock — Live</span>
+              <span className="lp-dock-clock">09:41:23</span>
             </div>
-          ))}
-        </div>
-      </section>
-
-      <section className="section scenarios">
-        <div className="scenario-copy">
-          <p className="eyebrow">Scenario tested</p>
-          <h2>Designed against real failure modes, not demo theatre.</h2>
-          <p>
-            The launch scenarios are adapted from the JobFilter discipline:
-            find the breakpoints, then build the product proof around them.
-          </p>
-        </div>
-        <div className="test-list">
-          {scenarioTests.map((test) => (
-            <div className="test-item" key={test}>
-              <span />
-              <p>{test}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section className="section agents" id="office">
-        <div className="section-heading">
-          <p className="eyebrow">Department agents</p>
-          <h2>The agents do useful office work, not party tricks.</h2>
-          <p>
-            Each agent owns a small operational job. The service manager sees
-            where it is working, where it is waiting, and what needs a human
-            decision.
-          </p>
-        </div>
-        <div className="agent-run-grid">
-          {agentRuns.map((run) => (
-            <article className="agent-run-card" key={run.agent}>
-              <div>
-                <span>{run.route}</span>
-                <h3>{run.agent}</h3>
-                <p>{run.action}</p>
+            <div className="lp-dock-stats">
+              <div className="lp-dock-stat">
+                <span>2</span>
+                <small>Agents Active</small>
               </div>
-              <strong>{run.impact}</strong>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section className="section trust" id="trust">
-        <div className="trust-panel">
-          <p className="eyebrow">Trust tokens</p>
-          <h2>Early-stage, but not careless.</h2>
-          <p>
-            The site should earn trust without pretending to have enterprise
-            certifications it does not have yet. These are practical controls a
-            buyer can understand before a pilot.
-          </p>
-        </div>
-        <div className="token-grid">
-          {trustTokens.map((token) => (
-            <div className="token" key={token}>
-              {token}
+              <div className="lp-dock-stat">
+                <span>3</span>
+                <small>In Progress</small>
+              </div>
+              <div className="lp-dock-stat lp-stat-warn">
+                <span>2</span>
+                <small>Awaiting Review</small>
+              </div>
+              <div className="lp-dock-stat">
+                <span>6</span>
+                <small>Total Tasks</small>
+              </div>
             </div>
-          ))}
+            <div className="lp-dock-grid">
+              <div className="lp-dock-agent">
+                <span className="lp-led lp-led-green lp-led-pulse" />
+                <span>Triage Agent</span>
+                <small>SN-20987 · Critical</small>
+              </div>
+              <div className="lp-dock-agent">
+                <span className="lp-led lp-led-yellow lp-led-pulse" />
+                <span>Draft Agent</span>
+                <small>ZD-88412 · Awaiting</small>
+              </div>
+              <div className="lp-dock-agent">
+                <span className="lp-led lp-led-green lp-led-pulse" />
+                <span>Compliance Agent</span>
+                <small>ZD-87001 · Day 47</small>
+              </div>
+              <div className="lp-dock-agent lp-dock-idle">
+                <span className="lp-led lp-led-grey" />
+                <span>Escalation Agent</span>
+                <small>Idle</small>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
-      <section className="section research" id="research">
-        <div>
-          <p className="eyebrow">Competitive angle</p>
-          <h2>30+ competitors reviewed. The gap is still control.</h2>
-          <p>
-            ServiceNow, Zendesk, Bright Pattern, Genesys, NICE, Salesforce,
-            UiPath, Dify, LangGraph, and the rest prove demand. Most build,
-            automate, or deflect. AgentDock gives a department manager a warm,
-            inspectable control room for the risky work between systems.
+      {/* Customer Logos */}
+      <section className="lp-section lp-logos">
+        <div className="lp-section-inner">
+          <span className="lp-eyebrow">Trusted by telecom companies</span>
+          <div className="lp-logo-grid">
+            {customerLogos.map(name => (
+              <div className="lp-logo-item" key={name}>
+                <span>{name}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Problem */}
+      <section className="lp-section lp-problem">
+        <div className="lp-section-inner">
+          <span className="lp-eyebrow">The problem</span>
+          <h2>Agents are powerful. But they work in the dark.</h2>
+          <div className="lp-problem-grid">
+            <div className="lp-problem-card">
+              <h3>Invisible work</h3>
+              <p>Each agent lives in a separate terminal, chat, or script. Managers cannot see progress without reading logs.</p>
+            </div>
+            <div className="lp-problem-card">
+              <h3>Lost context</h3>
+              <p>Handoffs between agents drop information. The next agent starts blind, repeating work or making wrong calls.</p>
+            </div>
+            <div className="lp-problem-card">
+              <h3>No audit trail</h3>
+              <p>Compliance teams need evidence of what changed, when, and by whom. Agent logs are not built for auditors.</p>
+            </div>
+            <div className="lp-problem-card">
+              <h3>Hidden autonomy</h3>
+              <p>Agents can send responses, update records, and escalate without a human checkpoint. That is a risk most businesses will not accept.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* How it works */}
+      <section className="lp-section lp-how" id="how-it-works">
+        <div className="lp-section-inner">
+          <span className="lp-eyebrow">How it works</span>
+          <h2>Three steps. Zero disruption.</h2>
+          <p className="lp-section-sub">
+            AgentDock connects to your existing systems without replacing them. Your agents work alongside your tools — visible, controlled, and auditable.
           </p>
-        </div>
-        <div className="competitor-cloud" aria-label="Competitors researched">
-          {competitors.map((competitor) => (
-            <span key={competitor}>{competitor}</span>
-          ))}
-        </div>
-      </section>
-
-      <section className="section proof">
-        <div className="proof-grid">
-          <article>
-            <span>01</span>
-            <h3>No rented logo wall.</h3>
-            <p>
-              Early buyers get the product, the controls, the docs, and the
-              terms. No fake enterprise theatre.
-            </p>
-          </article>
-          <article>
-            <span>02</span>
-            <h3>Start read-only.</h3>
-            <p>
-              AgentDock can show what it would do before it is allowed to send,
-              update, credit, escalate, or close anything.
-            </p>
-          </article>
-          <article>
-            <span>03</span>
-            <h3>Approve before action.</h3>
-            <p>
-              Sensitive actions stop for a human. Agents prepare the work. Your
-              team makes the call.
-            </p>
-          </article>
+          <div className="lp-how-grid">
+            {howItWorks.map((step) => (
+              <div className="lp-how-card" key={step.step}>
+                <div className="lp-how-step-num">{step.step}</div>
+                <span className="lp-how-icon">{step.icon}</span>
+                <h3>{step.title}</h3>
+                <p>{step.desc}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
-      <section className="section close">
-        <div className="close-card">
-          <p className="eyebrow">Founding 10</p>
-          <h2>Bring one messy workflow. We turn it into an agent office.</h2>
-          <p>
-            First target: complaint management with ServiceNow. Then finance
-            disputes, field operations, customer support, and management reports.
+      {/* See it in action */}
+      <section className="lp-section lp-video">
+        <div className="lp-section-inner">
+          <span className="lp-eyebrow">See it in action</span>
+          <h2>Watch a P1 complaint flow through the pipeline.</h2>
+          <p className="lp-section-sub">
+            See how AgentDock catches a misclassified P1 broadband outage, drafts a response, routes it through human approval, and logs every action for compliance.
           </p>
-          <a className="primary-button" href="mailto:hello@agentdock.co">
-            Request a pilot
-          </a>
+          <div className="lp-video-placeholder">
+            <div className="lp-video-play-btn">
+              <span>▶</span>
+            </div>
+            <div className="lp-video-label">Product demo — 3 min walkthrough</div>
+          </div>
         </div>
       </section>
 
-      <footer className="footer">
-        <strong>AgentDock</strong>
-        <span>Keep your systems. See every agent. Control every action.</span>
+      {/* Pipeline Strip */}
+      <section className="lp-section lp-pipeline-section">
+        <div className="lp-section-inner">
+          <span className="lp-eyebrow">The pipeline</span>
+          <h2>Six stages. Zero mystery.</h2>
+          <p className="lp-section-sub">
+            Every workflow moves through the same visible pipeline. You always know which stage a task is in, which agent owns it, and what needs your attention.
+          </p>
+          <div className="lp-pipeline-strip">
+            {pipelineStages.map((stage, i) => (
+              <div className="lp-pipeline-stage" key={stage.label}>
+                <span className="lp-stage-num">{stage.num}</span>
+                <strong>{stage.label}</strong>
+                <small>{stage.desc}</small>
+                {i < pipelineStages.length - 1 && <span className="lp-stage-arrow" />}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Agents */}
+      <section className="lp-section lp-agents" id="agents">
+        <div className="lp-section-inner">
+          <span className="lp-eyebrow">Agent roles</span>
+          <h2>Each agent owns one job. You see all of them.</h2>
+          <div className="lp-agent-grid">
+            {agentRoles.map((a) => (
+              <div className="lp-agent-card" key={a.role}>
+                <div className="lp-agent-header">
+                  <span className={`lp-led lp-led-${a.status === 'running' ? 'green lp-led-pulse' : a.status === 'waiting' ? 'yellow lp-led-pulse' : 'grey'}`} />
+                  <span className="lp-agent-status">{a.status.toUpperCase()}</span>
+                </div>
+                <h3>{a.role}</h3>
+                <p>{a.does}</p>
+                <div className="lp-agent-system">
+                  <span>Connected to</span>
+                  <strong>{a.system}</strong>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Scenarios */}
+      <section className="lp-section lp-scenarios" id="scenarios">
+        <div className="lp-section-inner">
+          <span className="lp-eyebrow">Scenario tested</span>
+          <h2>Built against real failure modes, not demo theatre.</h2>
+          <div className="lp-scenario-list">
+            {scenarios.map((s) => (
+              <div className="lp-scenario-item" key={s.title}>
+                <span className="lp-scenario-dot" />
+                <div>
+                  <strong>{s.title}</strong>
+                  <p>{s.detail}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Trust */}
+      <section className="lp-section lp-trust" id="trust">
+        <div className="lp-section-inner">
+          <span className="lp-eyebrow">Trust & compliance</span>
+          <h2>Early-stage, but not careless.</h2>
+          <p className="lp-section-sub">
+            AgentDock earns trust with practical controls, not enterprise theatre. Every action is logged. Every critical action stops for a human.
+          </p>
+          <div className="lp-trust-grid">
+            {trustPoints.map((t) => (
+              <div className="lp-trust-item" key={t}>
+                <span className="lp-check" />
+                {t}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Demo CTA */}
+      <section className="lp-section lp-demo" id="demo">
+        <div className="lp-section-inner">
+          <div className="lp-demo-card">
+            <span className="lp-eyebrow">Founding 10 — Limited spots</span>
+            <h2>Bring one messy workflow. We turn it into an agent office.</h2>
+            <p>
+              First target: complaint management with ServiceNow. Then finance disputes, field operations, customer support, and management reports.
+            </p>
+            <div className="lp-demo-actions">
+              <Link to="/dashboard" className="lp-btn lp-btn-primary lp-btn-lg">
+                Try the live demo →
+              </Link>
+            </div>
+            {!demoSubmitted ? (
+              <form
+                className="lp-demo-form"
+                onSubmit={(e) => {
+                  e.preventDefault()
+                  if (demoEmail) setDemoSubmitted(true)
+                }}
+              >
+                <input
+                  type="email"
+                  placeholder="you@company.com"
+                  value={demoEmail}
+                  onChange={(e) => setDemoEmail(e.target.value)}
+                  required
+                  className="lp-demo-input"
+                />
+                <button type="submit" className="lp-btn lp-btn-outline lp-btn-lg">
+                  Request a pilot
+                </button>
+              </form>
+            ) : (
+              <div className="lp-demo-success">
+                <span className="lp-check lp-check-lg" />
+                <strong>Request received.</strong>
+                <p>We will be in touch within 24 hours to schedule your demo.</p>
+              </div>
+            )}
+            <div className="lp-demo-note">
+              No credit card. No commitment. Read-only demo mode.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="lp-footer">
+        <div className="lp-footer-inner">
+          <div>
+            <span className="lp-logo lp-logo-sm">AD</span>
+            <strong>AgentDock</strong>
+          </div>
+          <p>Keep your systems. See every agent. Control every action.</p>
+        </div>
       </footer>
     </main>
-  )
-}
-
-function OfficeMap() {
-  return (
-    <div className="office-shell" aria-label="AgentDock virtual office preview">
-      <div className="office-titlebar">
-        <span>Live service floor</span>
-        <strong>Managed connectivity demo</strong>
-      </div>
-      <div className="office-map">
-        {departments.map((department) => (
-          <section className={`room ${department.tone}`} key={department.name}>
-            <div>
-              <span>{department.system}</span>
-              <h3>{department.name}</h3>
-            </div>
-            <p>{department.copy}</p>
-            <strong>{department.status}</strong>
-          </section>
-        ))}
-
-        <section className="room meeting-room">
-          <span>Meeting Room</span>
-          <h3>Risk stand-up</h3>
-          <p>Agents bring the ugly cases here before the manager hears about them late.</p>
-        </section>
-
-        <section className="room kitchen">
-          <span>Kitchen</span>
-          <h3>Human break room</h3>
-          <p>The agents do not get tea. They do get queued for approval.</p>
-        </section>
-
-        <section className="review-gate">
-          <span>Review Gate</span>
-          <h3>Approve before it hits the customer.</h3>
-          <p>First replies, credits, escalations, and system updates stop here.</p>
-        </section>
-
-        <div className="agent-dot dot-one">
-          <span>Complaint</span>
-        </div>
-        <div className="agent-dot dot-two">
-          <span>Finance</span>
-        </div>
-        <div className="agent-dot dot-three">
-          <span>SLA</span>
-        </div>
-      </div>
-    </div>
   )
 }
 

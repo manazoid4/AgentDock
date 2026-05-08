@@ -16,11 +16,8 @@ function LiveClock() {
 
   return (
     <span style={{
-      fontFamily: "'JetBrains Mono', monospace",
-      fontSize: 12,
-      color: 'var(--text-3)',
-      letterSpacing: '0.08em',
-      userSelect: 'none',
+      fontFamily: "'JetBrains Mono', monospace", fontSize: 12,
+      color: 'var(--text-3)', letterSpacing: '0.08em', userSelect: 'none',
     }}>
       {hh}:{mm}:{ss}
     </span>
@@ -41,35 +38,25 @@ function connectorLedClass(status: Connector['status']): string {
 }
 
 export default function TopNav({ pendingApprovals, connectors }: Props) {
+  const errorCount = connectors.filter(c => c.status === 'error').length
+
   return (
     <nav style={{
-      display: 'flex',
-      alignItems: 'center',
-      padding: '0 20px',
-      height: 52,
-      background: 'var(--bg)',
-      borderBottom: '1px solid var(--border)',
-      gap: 16,
-      flexShrink: 0,
-      zIndex: 100,
+      display: 'flex', alignItems: 'center', padding: '0 20px', height: 52,
+      background: 'var(--bg)', borderBottom: '1px solid var(--border)',
+      gap: 16, flexShrink: 0, zIndex: 100,
     }}>
       {/* Logo */}
       <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none' }}>
         <span className="block-card block-card--blue" style={{
-          padding: '2px 7px',
-          fontFamily: 'monospace',
-          fontWeight: 700,
-          fontSize: 13,
-          letterSpacing: '0.05em',
+          padding: '2px 7px', fontFamily: 'monospace', fontWeight: 700,
+          fontSize: 13, letterSpacing: '0.05em',
         }}>
           AD
         </span>
         <span style={{
-          fontFamily: 'monospace',
-          fontWeight: 700,
-          fontSize: 13,
-          color: 'var(--text)',
-          letterSpacing: '0.12em',
+          fontFamily: 'monospace', fontWeight: 700, fontSize: 13,
+          color: 'var(--text)', letterSpacing: '0.12em',
         }}>
           AGENTDOCK
         </span>
@@ -79,7 +66,7 @@ export default function TopNav({ pendingApprovals, connectors }: Props) {
       <div style={{ flex: 1 }} />
 
       {/* Connector status dots */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+      <Link to="/dashboard/connectors" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 10 }}>
         {connectors.map(c => (
           <div key={c.id} style={{ display: 'flex', alignItems: 'center', gap: 5 }} title={`${c.name}: ${c.status}`}>
             <span className={connectorLedClass(c.status)} />
@@ -88,7 +75,14 @@ export default function TopNav({ pendingApprovals, connectors }: Props) {
             </span>
           </div>
         ))}
-      </div>
+        {errorCount > 0 && (
+          <span style={{
+            fontSize: 9, color: 'var(--red)', fontFamily: 'monospace', fontWeight: 700,
+          }}>
+            {errorCount} error{errorCount > 1 ? 's' : ''}
+          </span>
+        )}
+      </Link>
 
       {/* Live clock */}
       <LiveClock />
@@ -97,17 +91,11 @@ export default function TopNav({ pendingApprovals, connectors }: Props) {
       {pendingApprovals > 0 && (
         <Link to="/dashboard/review" style={{ textDecoration: 'none' }}>
           <span className="block-card block-card--yellow" style={{
-            padding: '3px 10px',
-            fontSize: 11,
-            fontWeight: 700,
-            fontFamily: 'monospace',
-            letterSpacing: '0.06em',
-            display: 'flex',
-            alignItems: 'center',
-            gap: 6,
+            padding: '3px 10px', fontSize: 11, fontWeight: 700, fontFamily: 'monospace',
+            letterSpacing: '0.06em', display: 'flex', alignItems: 'center', gap: 6,
           }}>
             <span className="status-led led-yellow led-pulse" />
-            {pendingApprovals} PENDING REVIEW
+            {pendingApprovals} PENDING
           </span>
         </Link>
       )}
@@ -116,15 +104,8 @@ export default function TopNav({ pendingApprovals, connectors }: Props) {
       <button
         className="block-card block-card--blue"
         style={{
-          padding: '4px 14px',
-          fontSize: 11,
-          fontWeight: 700,
-          fontFamily: 'monospace',
-          letterSpacing: '0.06em',
-          cursor: 'pointer',
-          border: 'none',
-          background: 'none',
-          color: 'var(--blue)',
+          padding: '4px 14px', fontSize: 11, fontWeight: 700, fontFamily: 'monospace',
+          letterSpacing: '0.06em', cursor: 'pointer', border: 'none', background: 'none', color: 'var(--blue)',
         }}
         onClick={() => alert('New Workflow — coming soon')}
       >
